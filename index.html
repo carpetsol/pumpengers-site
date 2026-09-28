@@ -2,7 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0c10">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Pumpengers">
+<meta name="format-detection" content="telephone=no">
 <title>Your Studio — Films</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,7 +29,8 @@
     --pad: clamp(16px, 4vw, 56px);
   }
   * { box-sizing: border-box; margin: 0; }
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; background: var(--bg); -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  a, button { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
   body {
     background: var(--bg);
     color: var(--text);
@@ -31,6 +38,9 @@
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     min-height: 100vh;
+    min-height: 100dvh;
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
     overflow-x: hidden;
   }
   button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none; }
@@ -40,19 +50,19 @@
   /* ---------- Profile picker ---------- */
   .profiles {
     position: fixed; inset: 0; z-index: 100; background: var(--bg);
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    padding: 24px var(--pad); overflow-y: auto; animation: fade .5s ease-out;
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+    padding: calc(24px + env(safe-area-inset-top)) var(--pad) calc(24px + env(safe-area-inset-bottom)); overflow-y: auto; -webkit-overflow-scrolling: touch; animation: fade .5s ease-out;
   }
   @keyframes fade { from { opacity: 0 } }
-  .profiles .brand { position: absolute; top: 20px; left: var(--pad); }
-  .profiles h1 { font-size: clamp(30px, 5vw, 52px); font-weight: 500; letter-spacing: -.01em; text-align: center; margin-bottom: clamp(28px, 5vw, 56px); }
+  .profiles .brand { position: absolute; top: calc(20px + env(safe-area-inset-top)); left: calc(var(--pad) + env(safe-area-inset-left)); }
+  .profiles h1 { font-size: clamp(30px, 5vw, 52px); font-weight: 500; letter-spacing: -.01em; text-align: center; margin-top: auto; margin-bottom: clamp(28px, 5vw, 56px); }
   .profile-list { display: flex; flex-wrap: wrap; justify-content: center; gap: clamp(16px, 3vw, 36px); }
   .profile { display: flex; flex-direction: column; align-items: center; gap: 14px; width: clamp(96px, 16vw, 150px); color: var(--muted); transition: color .2s; }
   .profile .avatar { width: 100%; aspect-ratio: 1; border-radius: 8px; border: 3px solid transparent; transition: border-color .15s, transform .15s; }
   .profile:hover, .profile:focus-visible { color: var(--text); }
   .profile:hover .avatar, .profile:focus-visible .avatar { border-color: var(--text); transform: scale(1.04); }
   .profile span { font-size: clamp(15px, 1.8vw, 20px); }
-  .add-profile { margin-top: clamp(32px, 6vw, 64px); border: 1px solid var(--muted); color: var(--muted); padding: 10px 26px; font-size: 16px; letter-spacing: .04em; transition: color .2s, border-color .2s; }
+  .add-profile { margin-top: clamp(32px, 6vw, 64px); margin-bottom: auto; border: 1px solid var(--muted); color: var(--muted); padding: 10px 26px; font-size: 16px; letter-spacing: .04em; transition: color .2s, border-color .2s; }
   .add-profile:hover { color: var(--text); border-color: var(--text); }
   .avatar { display: block; }
   .profiles h1, .add-profile, .profile { transition: opacity .35s ease, color .2s; }
@@ -142,7 +152,7 @@
   .nav {
     position: fixed; inset: 0 0 auto 0; z-index: 30;
     display: flex; align-items: center; gap: clamp(16px, 3vw, 40px);
-    padding: 14px var(--pad);
+    padding: calc(14px + env(safe-area-inset-top)) calc(var(--pad) + env(safe-area-inset-right)) 14px calc(var(--pad) + env(safe-area-inset-left));
     background: linear-gradient(to bottom, rgba(11,12,16,.92), rgba(11,12,16,0));
     transition: background .3s;
   }
@@ -162,7 +172,7 @@
   .me:hover span { color: var(--text); }
 
   /* ---------- Hero ---------- */
-  .hero { position: relative; min-height: min(86vh, 760px); display: flex; align-items: flex-end; overflow: hidden; }
+  .hero { position: relative; min-height: min(86vh, 760px); min-height: min(86svh, 760px); display: flex; align-items: flex-end; overflow: hidden; }
   .hero > .art { position: absolute; inset: 0; border-radius: 0; }
   .hero > .art .art-title { display: none; }
   .hero::after {
@@ -212,7 +222,7 @@
   .row h2 { font-size: clamp(17px, 1.8vw, 21px); font-weight: 700; padding: 0 var(--pad); margin-bottom: 10px; }
   .track-wrap { position: relative; }
   .track {
-    display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x proximity;
+    display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x proximity; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch;
     padding: 8px var(--pad) 26px; scrollbar-width: none; scroll-padding-left: var(--pad);
   }
   .track::-webkit-scrollbar { display: none; }
@@ -253,12 +263,66 @@
 
   @media (max-width: 640px) {
     .nav-links, .me span { display: none; }
-    .hero { min-height: 74vh; }
+    .hero { min-height: 74vh; min-height: 74svh; }
     .hero::after { background: linear-gradient(to top, var(--bg) 8%, rgba(11,12,16,.55) 55%, rgba(11,12,16,.25) 100%); }
     .hero.playing { padding-top: 70px; }
     .stage, .now, .episodes { width: 100%; }
     .ep { grid-template-columns: 24px minmax(96px, 130px) 1fr; gap: 12px; padding: 12px 6px; }
     .ep-desc { display: none; }
+  }
+  /* ---------- Touch devices (iPhone / iPad) ---------- */
+  .tabbar { display: none; }
+  @media (hover: none) {
+    .card:hover, .card:focus-visible { transform: none; box-shadow: none; }
+    .card:hover .card-info { opacity: 0; }
+    .card:hover .art-title { opacity: 1; }
+    .profile:hover .avatar { border-color: transparent; transform: none; }
+    .ep:not(.current):hover { background: transparent; }
+  }
+  @media (pointer: coarse) {
+    .btn, .btn-ghost, .add-profile, .season-select { min-height: 44px; }
+    .search { padding: 11px 12px; }
+    .me { padding: 6px; }
+    .search input, .season-select { font-size: 16px; }   /* 16px stops iOS zooming in when you tap a field */
+  }
+  @media (max-width: 640px) {
+    .brand-logo { height: 40px; }
+    .profiles .brand .brand-logo { height: 46px; }
+    #app { padding-bottom: calc(58px + env(safe-area-inset-bottom)); }
+    .tabbar {
+      display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+      background: rgba(11,12,16,.97); border-top: 1px solid var(--line);
+      padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+    .tabbar a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 52px; color: var(--muted); text-decoration: none; font-size: 11px; font-weight: 500; }
+    .tabbar a:active { color: var(--text); }
+    .tabbar svg { width: 23px; height: 23px; }
+    .hero { min-height: 68svh; }
+    .hero.playing { padding-top: calc(66px + env(safe-area-inset-top)); padding-bottom: 20px; }
+    .hero-inner { padding-bottom: 36px; }
+    .hero p { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+    .actions .btn { flex: 1; justify-content: center; }
+    .stage { border-radius: 6px; }
+    .now { margin-top: 16px; }
+    .now-text { flex-basis: 100%; }
+    .now-actions { width: 100%; display: flex; }
+    .now-actions .btn-ghost { flex: 1; justify-content: center; }
+    .episodes { margin-top: 26px; }
+    .card { width: clamp(118px, 31vw, 170px); }
+    .row h2 { padding-left: var(--pad); }
+    .results { padding-top: calc(96px + env(safe-area-inset-top)); }
+    .search:focus-within { flex: 1; margin-left: 0; }
+    .search:focus-within input { width: 100%; flex: 1; }
+    .search.has-text input { width: 96px; }
+    .nav:has(.search:focus-within) .brand { display: none; }
+  }
+  /* Phones turned sideways */
+  @media (max-height: 500px) and (orientation: landscape) {
+    .brand-logo { height: 32px; }
+    .nav { padding-top: calc(8px + env(safe-area-inset-top)); padding-bottom: 8px; }
+    .hero { min-height: 100svh; }
+    .hero.playing { padding-top: calc(52px + env(safe-area-inset-top)); }
+    .stage, .now, .episodes { width: min(100%, calc((100vh - 84px) * 16 / 9)); }
   }
   @media (prefers-reduced-motion: reduce) {
     * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
@@ -300,6 +364,12 @@
   </section>
 
   <footer id="footer"></footer>
+
+  <nav class="tabbar" aria-label="Main">
+    <a href="#" data-go="top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h13V10"/></svg><span>Home</span></a>
+    <a href="#films" data-go="films"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M10 9v6l5-3z" fill="currentColor"/></svg><span>Films</span></a>
+    <a href="#mylist" data-go="mylist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>My List</span></a>
+  </nav>
 </div>
 
 <div class="splash" id="splash" hidden aria-hidden="true">
@@ -521,6 +591,7 @@ function filmLength(film) {
   return film.runtime;
 }
 
+const CAN_HOVER = window.matchMedia ? window.matchMedia("(hover: hover) and (pointer: fine)").matches : true;
 let heroFilm = null, previewTimer = null;
 
 /* Hovering (or tabbing to) a card puts that film in the banner. */
@@ -547,9 +618,11 @@ function makeCard(film) {
   b.appendChild(info);
 
   b.addEventListener("click", () => playFilm(film));
-  b.addEventListener("mouseenter", () => previewFilm(film));
-  b.addEventListener("focus", () => previewFilm(film));
-  b.addEventListener("mouseleave", () => clearTimeout(previewTimer));
+  if (CAN_HOVER) {                       // touch screens have no hover, so skip it there
+    b.addEventListener("mouseenter", () => previewFilm(film));
+    b.addEventListener("focus", () => previewFilm(film));
+    b.addEventListener("mouseleave", () => clearTimeout(previewTimer));
+  }
   return b;
 }
 
@@ -799,13 +872,23 @@ function resetView() {
 const nav = $("#nav");
 const onScroll = () => nav.classList.toggle("solid", window.scrollY > 40);
 window.addEventListener("scroll", onScroll, { passive: true }); onScroll();
+/* Home: stop any video, clear the search, bring back the main banner, scroll to the top. */
+function goHome() {
+  if (fsElement()) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+  qEl.value = ""; qEl.dispatchEvent(new Event("input"));
+  heroFilm = null;
+  renderHero();                          // removes the video and restores the featured film
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
 document.querySelectorAll("[data-go]").forEach(a => a.addEventListener("click", e => {
   e.preventDefault();
+  if (a.dataset.go === "top") return goHome();
   qEl.value = ""; qEl.dispatchEvent(new Event("input"));
-  const t = a.dataset.go === "top" ? document.body : document.getElementById(a.dataset.go);
-  (t || document.body).scrollIntoView({ behavior: "smooth", block: a.dataset.go === "top" ? "start" : "center" });
+  const t = document.getElementById(a.dataset.go);
+  if (t) t.scrollIntoView({ behavior: "smooth", block: "center" });
 }));
-$("#brand").addEventListener("click", e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); });
+$("#brand").addEventListener("click", e => { e.preventDefault(); goHome(); });
+qEl.addEventListener("keydown", e => { if (e.key === "Enter") qEl.blur(); });   // closes the iPhone keyboard
 $("#me").addEventListener("click", switchProfile);
 
 /* ---------- Boot ---------- */
