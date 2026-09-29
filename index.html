@@ -199,8 +199,8 @@
       linear-gradient(to right, rgba(11,12,16,.92) 0%, rgba(11,12,16,.55) 38%, rgba(11,12,16,0) 70%),
       linear-gradient(to top, var(--bg) 0%, rgba(11,12,16,0) 38%);
   }
-  .hero-inner { position: relative; z-index: 2; padding: 0 var(--pad) clamp(48px, 9vw, 110px); max-width: 720px; }
-  .hero h1 { font-family: var(--display); font-weight: 400; font-size: clamp(32px, 6.5vw, 104px); line-height: .95; letter-spacing: .01em; white-space: nowrap; max-width: calc(100vw - (2 * var(--pad))); }
+  .hero-inner { position: relative; z-index: 2; padding: 0 var(--pad) clamp(48px, 9vw, 110px); max-width: 100%; }
+  .hero h1 { font-family: var(--display); font-weight: 400; font-size: clamp(30px, 6vw, 96px); line-height: 1; letter-spacing: .01em; white-space: nowrap !important; word-break: keep-all; overflow-wrap: normal; max-width: none; }
   .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin: 16px 0 12px; font-size: 14px; color: var(--muted); }
   .meta .tag { border: 1px solid var(--line); border-radius: 3px; padding: 1px 7px; color: var(--text); font-size: 12px; }
   .hero p { font-size: clamp(15px, 1.5vw, 18px); color: #d4d7de; max-width: 52ch; text-wrap: pretty; }
@@ -321,7 +321,7 @@
     .hero { min-height: 68svh; }
     .hero.playing { padding-top: calc(66px + env(safe-area-inset-top)); padding-bottom: 20px; }
     .hero-inner { padding-bottom: 36px; }
-    .hero h1 { font-size: clamp(22px, 7.2vw, 42px); line-height: 1; }
+    .hero h1 { font-size: clamp(20px, 6.6vw, 36px); line-height: 1; white-space: nowrap !important; word-break: keep-all; overflow-wrap: normal; }
     .hero p { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
     .actions .btn { flex: 1; justify-content: center; }
     .stage { border-radius: 6px; }
@@ -484,6 +484,11 @@ const FILMS = [
 
 const $ = (s, root = document) => root.querySelector(s);
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
+
+window.addEventListener("resize", () => {
+  const title = $("#hero h1");
+  if (title) requestAnimationFrame(() => fitHeroTitle(title));
+});
 
 /* ---------- Profiles ---------- */
 let current = null;
@@ -708,6 +713,26 @@ const PLAY_ICON = '<svg width="20" height="20" viewBox="0 0 24 24" fill="current
 
 function listLabel(film) { return inList(film.title) ? "✓ In My List" : "+ My List"; }
 
+function fitHeroTitle(titleEl) {
+  if (!titleEl || !titleEl.isConnected) return;
+  const hero = titleEl.closest(".hero");
+  if (!hero || hero.hidden || hero.classList.contains("playing")) return;
+
+  // Reset any previous inline size so the CSS breakpoint sets the starting size.
+  titleEl.style.fontSize = "";
+  const styles = getComputedStyle(titleEl);
+  const startSize = parseFloat(styles.fontSize) || 32;
+  const sidePad = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--pad")) || 16;
+  const available = Math.max(120, hero.clientWidth - (sidePad * 2));
+
+  // white-space: nowrap guarantees a single line; shrink only when needed.
+  const needed = titleEl.scrollWidth;
+  if (needed > available) {
+    const fitted = Math.max(18, Math.floor(startSize * (available / needed) * 0.985));
+    titleEl.style.fontSize = fitted + "px";
+  }
+}
+
 function renderHero(film, opts = {}) {
   activeStage = null;
   film = film || heroFilm || FILMS.find(f => f.featured) || FILMS[0];
@@ -718,7 +743,8 @@ function renderHero(film, opts = {}) {
   hero.replaceChildren();
   hero.appendChild(makeArt(film, { wide: true }));
   const inner = el("div", "hero-inner");
-  inner.appendChild(el("h1", null, film.title));
+  const title = el("h1", null, film.title);
+  inner.appendChild(title);
   inner.appendChild(metaLine(film));
   inner.appendChild(el("p", null, film.description));
   const actions = el("div", "actions");
@@ -732,6 +758,7 @@ function renderHero(film, opts = {}) {
   actions.append(play, list);
   inner.appendChild(actions);
   hero.appendChild(inner);
+  requestAnimationFrame(() => fitHeroTitle(title));
   if (opts.animate) { void hero.offsetWidth; hero.classList.add("swap"); }
 }
 
